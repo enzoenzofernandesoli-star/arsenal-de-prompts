@@ -551,51 +551,65 @@
   }
   .layer-desc{color:var(--text2);font-size:14.5px;line-height:1.8;max-width:52ch;}
 
-  /* ---------- grid blocos ---------- */
-  .blocks-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:22px;
+  /* ---------- pilha interativa de módulos ---------- */
+  .module-stack{
+    position:relative;
+    max-width:420px;
+    height:308px;
+    margin:0 auto;
   }
-  .blocks-grid .card:nth-child(4),
-  .blocks-grid .card:nth-child(5){grid-column:span 1;}
-  @media (max-width:820px){
-    .blocks-grid{grid-template-columns:repeat(2,1fr);}
+  .stack-radio{
+    position:absolute;
+    width:1px;height:1px;
+    opacity:0;
+    pointer-events:none;
   }
-  @media (max-width:640px){
-    .blocks-grid{grid-template-columns:1fr;}
-  }
-  .card{
+  .stack-card{
+    position:absolute;
+    top:0;left:50%;
+    width:100%;
+    display:block;
     background:var(--bg2);
     border:1px solid var(--line);
-    border-radius:6px;
-    padding:28px;
-    position:relative;
+    border-radius:8px;
     overflow:hidden;
+    cursor:pointer;
+    box-shadow:0 20px 38px -18px rgba(0,0,0,0.65);
+    transition:transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .35s;
+    animation:stackBreathe 5s ease-in-out infinite;
   }
-  .card-range{
+  .stack-card:hover{box-shadow:0 24px 44px -14px rgba(0,0,0,0.75);}
+  @keyframes stackBreathe{
+    0%,100%{ filter:brightness(1); }
+    50%{ filter:brightness(1.04); }
+  }
+  .card-1{ z-index:5; transform:translate(-50%,0) rotate(-2deg) scale(1); }
+  .card-2{ z-index:4; transform:translate(-50%,16px) rotate(2.5deg) scale(0.96); }
+  .card-3{ z-index:3; transform:translate(-50%,30px) rotate(-3deg) scale(0.93); }
+  .card-4{ z-index:2; transform:translate(-50%,42px) rotate(3.5deg) scale(0.9); }
+  .card-5{ z-index:1; transform:translate(-50%,52px) rotate(-4deg) scale(0.87); }
+  #sel-1:checked ~ .card-1,
+  #sel-2:checked ~ .card-2,
+  #sel-3:checked ~ .card-3,
+  #sel-4:checked ~ .card-4,
+  #sel-5:checked ~ .card-5{
+    z-index:10;
+    transform:translate(-50%,0) rotate(0deg) scale(1.02);
+    box-shadow:0 26px 50px -14px rgba(0,0,0,0.7);
+  }
+  .stack-hint{
+    text-align:center;
     font-family:'JetBrains Mono',monospace;
-    font-size:12px;
-    color:var(--mustard-dark);
-    margin-bottom:12px;
-    letter-spacing:0.04em;
+    font-size:12.5px;
+    color:var(--text3);
+    margin-top:24px;
   }
-  .card-title{
-    font-family:'Fraunces',serif;
-    font-weight:500;
-    font-size:18px;
-    margin-bottom:12px;
-  }
-  .card-desc{
-    font-size:13.5px;
-    color:var(--text2);
-    line-height:1.75;
-  }
-  .card-bar{
-    position:absolute;
-    bottom:0;left:0;right:0;
-    height:2px;
-    background:linear-gradient(90deg, var(--mustard), transparent);
+  @media (max-width:640px){
+    .module-stack{height:280px;}
+    .card-2{ transform:translate(-50%,13px) rotate(2.5deg) scale(0.96); }
+    .card-3{ transform:translate(-50%,24px) rotate(-3deg) scale(0.93); }
+    .card-4{ transform:translate(-50%,34px) rotate(3.5deg) scale(0.9); }
+    .card-5{ transform:translate(-50%,42px) rotate(-4deg) scale(0.87); }
   }
 
   .stats-row{
@@ -1011,38 +1025,116 @@
     <div class="label-row"><span class="label">03 / O QUE TEM DENTRO</span><span class="fill"></span></div>
     <h2>5 blocos, 50 prompts</h2>
 
-    <div class="blocks-grid">
-      <div class="card">
-        <div class="card-range mono">PROMPTS 01–13</div>
-        <div class="card-title">Captação e venda</div>
-        <p class="card-desc">Nicho, auditoria de prospect, abordagem, follow-up, call de diagnóstico, preço, proposta, objeção, negociação, escopo, boas-vindas.</p>
-        <div class="card-bar"></div>
-      </div>
-      <div class="card">
-        <div class="card-range mono">PROMPTS 14–22</div>
-        <div class="card-title">Onboarding e estratégia</div>
-        <p class="card-desc">Briefing, tom de voz, mapa de público, pilares, concorrência, baseline, bio, plano de 90 dias, métricas.</p>
-        <div class="card-bar"></div>
-      </div>
-      <div class="card">
-        <div class="card-range mono">PROMPTS 23–37</div>
-        <div class="card-title">Produção</div>
-        <p class="card-desc">Calendário, banco de temas, ganchos, Reels, carrossel, legenda, stories, anúncio, reaproveitamento, revisão anti-IA.</p>
-        <div class="card-bar"></div>
-      </div>
-      <div class="card">
-        <div class="card-range mono">PROMPTS 38–42</div>
-        <div class="card-title">Atendimento e relacionamento</div>
-        <p class="card-desc">Comentários, qualificação em DM, crise, lead que sumiu, fluxo de aprovação.</p>
-        <div class="card-bar"></div>
-      </div>
-      <div class="card">
-        <div class="card-range mono">PROMPTS 43–50</div>
-        <div class="card-title">Análise e retenção</div>
-        <p class="card-desc">Relatório, diagnóstico de post ruim, leitura de padrão, reunião de resultado, upsell, reajuste, case, resgate.</p>
-        <div class="card-bar"></div>
-      </div>
+    <p class="lead">Um card por bloco. Clique no que estiver atrás pra trazer ele pra frente.</p>
+
+    <div class="module-stack">
+      <input type="radio" name="stackSel" id="sel-1" class="stack-radio" checked>
+      <input type="radio" name="stackSel" id="sel-2" class="stack-radio">
+      <input type="radio" name="stackSel" id="sel-3" class="stack-radio">
+      <input type="radio" name="stackSel" id="sel-4" class="stack-radio">
+      <input type="radio" name="stackSel" id="sel-5" class="stack-radio">
+
+      <label for="sel-1" class="stack-card card-1">
+        <div class="term-bar">
+          <div class="term-dots"><span></span><span></span><span></span></div>
+          <span class="term-file mono">bloco_01.md</span>
+          <span class="term-badge">bloco 1</span>
+        </div>
+        <div class="term-body">
+          <div class="term-tag-num">‹01–13›</div>
+          <div class="term-block-name">captação e venda</div>
+          <div class="term-title">Auditoria relâmpago de prospect</div>
+          <div class="fake-line" style="width:92%;"></div>
+          <div class="fake-line" style="width:78%;"></div>
+          <div class="fake-line" style="width:85%;"></div>
+          <div class="term-vars">
+            <span class="var-tag">[segmento]</span>
+            <span class="var-tag">[cole a bio]</span>
+          </div>
+        </div>
+      </label>
+
+      <label for="sel-2" class="stack-card card-2">
+        <div class="term-bar">
+          <div class="term-dots"><span></span><span></span><span></span></div>
+          <span class="term-file mono">bloco_02.md</span>
+          <span class="term-badge">bloco 2</span>
+        </div>
+        <div class="term-body">
+          <div class="term-tag-num">‹14–22›</div>
+          <div class="term-block-name">onboarding e estratégia</div>
+          <div class="term-title">Mapa de público em 10 minutos</div>
+          <div class="fake-line" style="width:88%;"></div>
+          <div class="fake-line" style="width:70%;"></div>
+          <div class="fake-line" style="width:80%;"></div>
+          <div class="term-vars">
+            <span class="var-tag">[nicho]</span>
+            <span class="var-tag">[ticket médio]</span>
+          </div>
+        </div>
+      </label>
+
+      <label for="sel-3" class="stack-card card-3">
+        <div class="term-bar">
+          <div class="term-dots"><span></span><span></span><span></span></div>
+          <span class="term-file mono">bloco_03.md</span>
+          <span class="term-badge">bloco 3</span>
+        </div>
+        <div class="term-body">
+          <div class="term-tag-num">‹23–37›</div>
+          <div class="term-block-name">produção</div>
+          <div class="term-title">Banco de ganchos pro Reels</div>
+          <div class="fake-line" style="width:90%;"></div>
+          <div class="fake-line" style="width:75%;"></div>
+          <div class="fake-line" style="width:60%;"></div>
+          <div class="term-vars">
+            <span class="var-tag">[tema]</span>
+            <span class="var-tag">[formato]</span>
+          </div>
+        </div>
+      </label>
+
+      <label for="sel-4" class="stack-card card-4">
+        <div class="term-bar">
+          <div class="term-dots"><span></span><span></span><span></span></div>
+          <span class="term-file mono">bloco_04.md</span>
+          <span class="term-badge">bloco 4</span>
+        </div>
+        <div class="term-body">
+          <div class="term-tag-num">‹38–42›</div>
+          <div class="term-block-name">atendimento e relacionamento</div>
+          <div class="term-title">Qualificação de lead na DM</div>
+          <div class="fake-line" style="width:85%;"></div>
+          <div class="fake-line" style="width:68%;"></div>
+          <div class="fake-line" style="width:72%;"></div>
+          <div class="term-vars">
+            <span class="var-tag">[mensagem]</span>
+            <span class="var-tag">[produto]</span>
+          </div>
+        </div>
+      </label>
+
+      <label for="sel-5" class="stack-card card-5">
+        <div class="term-bar">
+          <div class="term-dots"><span></span><span></span><span></span></div>
+          <span class="term-file mono">bloco_05.md</span>
+          <span class="term-badge">bloco 5</span>
+        </div>
+        <div class="term-body">
+          <div class="term-tag-num">‹43–50›</div>
+          <div class="term-block-name">análise e retenção</div>
+          <div class="term-title">Leitura de padrão do mês</div>
+          <div class="fake-line" style="width:80%;"></div>
+          <div class="fake-line" style="width:66%;"></div>
+          <div class="fake-line" style="width:74%;"></div>
+          <div class="term-vars">
+            <span class="var-tag">[métrica]</span>
+            <span class="var-tag">[período]</span>
+          </div>
+        </div>
+      </label>
     </div>
+    <div class="stack-hint">toque nos cards de trás pra trazer pra frente</div>
 
     <div class="stats-row">
       <div class="stat"><div class="stat-num serif">50</div><div class="stat-label">prompts</div></div>
