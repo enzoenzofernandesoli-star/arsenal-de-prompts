@@ -206,7 +206,28 @@
     0%,100%{ transform:translateY(0) rotate(-1.5deg); opacity:0.8; }
     50%{ transform:translateY(-10px) rotate(1.5deg); opacity:1; }
   }
-  @media (max-width:900px){ .prompt-float{ display:none; } }
+
+  /* abaixo de 900px os mini-terminais saem do modo flutuante-sobreposto
+     e viram uma fileira rolável acima do título, pra nunca cobrir o texto */
+  @media (max-width:900px){
+    .prompt-float-row{
+      display:flex;
+      gap:10px;
+      overflow-x:auto;
+      margin-bottom:22px;
+      padding-bottom:2px;
+      -webkit-overflow-scrolling:touch;
+    }
+    .prompt-float{
+      position:static;
+      flex:0 0 auto;
+      width:118px;
+    }
+  }
+  @media (max-width:640px){
+    .prompt-float{ width:104px; }
+    .pf-title{ font-size:9.5px; }
+  }
 
   .terminal-line{
     font-family:'JetBrains Mono',monospace;
@@ -266,19 +287,67 @@
   }
 
   .btn-primary{
-    display:inline-block;
+    display:inline-flex;
+    align-items:center;
+    gap:9px;
     background:var(--mustard);
     color:#1C1400;
     font-family:'Public Sans',sans-serif;
     font-weight:600;
-    font-size:15px;
-    padding:15px 30px;
+    font-size:16px;
+    padding:17px 34px;
     border-radius:6px;
     box-shadow:0 6px 22px -6px rgba(242,183,5,0.45);
     transition:transform .15s, box-shadow .15s;
+    animation:ctaPulse 2.6s ease-in-out infinite;
   }
-  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 26px -6px rgba(242,183,5,0.55);}
-  .btn-full{display:block;width:100%;text-align:center;}
+  .btn-primary::after{content:"→";transition:transform .15s;}
+  .btn-primary:hover{transform:translateY(-1px);box-shadow:0 8px 28px -4px rgba(242,183,5,0.65);}
+  .btn-primary:hover::after{transform:translateX(3px);}
+  .btn-full{display:flex;width:100%;justify-content:center;text-align:center;}
+  @keyframes ctaPulse{
+    0%,100%{ box-shadow:0 6px 22px -6px rgba(242,183,5,0.45); }
+    50%{ box-shadow:0 8px 30px -4px rgba(242,183,5,0.7); }
+  }
+
+  /* ---------- barra de compra fixa ---------- */
+  .sticky-buy{
+    position:fixed;
+    left:0;right:0;bottom:0;
+    z-index:50;
+    background:rgba(21,24,31,0.94);
+    backdrop-filter:blur(10px);
+    -webkit-backdrop-filter:blur(10px);
+    border-top:1px solid var(--line);
+    padding:13px 0;
+  }
+  .sticky-buy .wrap{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+  }
+  .sticky-buy-info{display:flex;flex-direction:column;gap:2px;min-width:0;}
+  .sticky-buy-name{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:14.5px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .sticky-buy-price{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--mustard);
+  }
+  .sticky-buy .btn-primary{
+    padding:11px 22px;
+    font-size:14px;
+    flex-shrink:0;
+  }
+  @media (max-width:520px){ .sticky-buy-name{display:none;} }
+  body{padding-bottom:78px;}
 
   .cta-note{
     font-family:'JetBrains Mono',monospace;
@@ -785,8 +854,9 @@
 <body>
 <!--
   LINK DE CHECKOUT: todos os botões CTA desta página usam href="#" como placeholder.
-  São 4 ocorrências — nav "Acessar", hero "Quero o Arsenal", card de preço "Quero o Arsenal"
-  e CTA final "Quero o Arsenal". Troque cada href="#" pelo link real de checkout antes de publicar.
+  São 5 ocorrências — nav "Acessar", hero "Quero o Arsenal", card de preço "Quero o Arsenal",
+  CTA final "Quero o Arsenal" e a barra fixa "Quero o Arsenal". Troque cada href="#" pelo link
+  real de checkout antes de publicar.
 -->
 
 <div class="rail">
@@ -807,11 +877,12 @@
 
 <header class="hero">
   <div class="wrap">
-    <div class="terminal-line">$ vevici --produto arsenal --prompts 50 --formato pronto-pra-usar<span class="cursor"></span></div>
+    <div class="terminal-line">$ vevici --prompts 50 --pronto-pra-usar<span class="cursor"></span></div>
 
     <span class="eyebrow"><span class="dot"></span>50 PROMPTS PRONTOS</span>
 
     <div class="hero-text">
+      <div class="prompt-float-row">
       <div class="prompt-float pf-1">
         <div class="pf-bar"><span></span><span></span><span></span></div>
         <div class="pf-body">
@@ -841,6 +912,7 @@
           <div class="pf-line" style="width:55%;"></div>
           <span class="pf-var">[cliente]</span>
         </div>
+      </div>
       </div>
       <h1>Feche, atenda e mantenha clientes <span class="hl">sem trabalhar o dobro</span></h1>
     </div>
@@ -1154,6 +1226,16 @@
     <div class="footer-right">50 prompts · 5 blocos</div>
   </div>
 </footer>
+
+<div class="sticky-buy">
+  <div class="wrap sticky-buy-inner">
+    <div class="sticky-buy-info">
+      <span class="sticky-buy-name">O Arsenal do Social Media</span>
+      <span class="sticky-buy-price">R$ [VALOR] · pagamento único</span>
+    </div>
+    <a href="#" class="btn-primary">Quero o Arsenal</a>
+  </div>
+</div>
 
 </body>
 </html>
