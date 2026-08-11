@@ -52,6 +52,32 @@
   .serif{font-family:'Fraunces',serif;font-weight:500;}
   .editorial{font-family:'Source Serif 4',serif;}
 
+  /* ---------- revelar ao rolar ---------- */
+  .reveal{
+    opacity:0;
+    transform:translateY(18px);
+    transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
+  }
+  .reveal.is-visible{ opacity:1; transform:translateY(0); }
+  .reveal-stagger > *{
+    opacity:0;
+    transform:translateY(14px);
+    transition:opacity .5s ease, transform .5s ease;
+  }
+  .reveal-stagger.is-visible > *{ opacity:1; transform:translateY(0); }
+  .reveal-stagger.is-visible > *:nth-child(1){transition-delay:.02s;}
+  .reveal-stagger.is-visible > *:nth-child(2){transition-delay:.07s;}
+  .reveal-stagger.is-visible > *:nth-child(3){transition-delay:.12s;}
+  .reveal-stagger.is-visible > *:nth-child(4){transition-delay:.17s;}
+  .reveal-stagger.is-visible > *:nth-child(5){transition-delay:.22s;}
+  .reveal-stagger.is-visible > *:nth-child(6){transition-delay:.27s;}
+  .reveal-stagger.is-visible > *:nth-child(7){transition-delay:.32s;}
+  .reveal-stagger.is-visible > *:nth-child(8){transition-delay:.37s;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation-duration:.001ms !important; animation-iteration-count:1 !important; transition-duration:.001ms !important; scroll-behavior:auto !important;}
+  }
+
   /* ---------- rail lateral ---------- */
   .rail{
     position:fixed;
@@ -197,10 +223,12 @@
     margin-bottom:6px;
   }
   .pf-line{
+    position:relative;
     height:3px;
     border-radius:2px;
     background:rgba(242,240,234,0.09);
     margin-bottom:4px;
+    overflow:hidden;
   }
   .pf-var{
     display:inline-block;
@@ -290,7 +318,22 @@
     max-width:12.5ch;
     margin-bottom:30px;
   }
-  h1 .hl{color:var(--mustard);}
+  h1 .hl{
+    color:var(--mustard);
+    position:relative;
+    display:inline-block;
+  }
+  h1 .hl::after{
+    content:"";
+    position:absolute;
+    left:0;right:0;bottom:-2px;
+    height:2px;
+    background:var(--mustard);
+    transform:scaleX(0);
+    transform-origin:left;
+    animation:underlineDraw 1s cubic-bezier(.2,.8,.2,1) .5s forwards;
+  }
+  @keyframes underlineDraw{ to{ transform:scaleX(1); } }
   @media (max-width:640px){ h1{font-size:32px;} }
 
   .subtitle{
@@ -442,10 +485,24 @@
     margin-bottom:18px;
   }
   .fake-line{
+    position:relative;
     height:9px;
     border-radius:3px;
     background:rgba(242,240,234,0.09);
     margin-bottom:10px;
+    overflow:hidden;
+  }
+  .fake-line::after, .pf-line::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(90deg, transparent, rgba(242,240,234,0.14), transparent);
+    transform:translateX(-100%);
+    animation:shimmer 3.2s ease-in-out infinite;
+  }
+  @keyframes shimmer{
+    0%{ transform:translateX(-100%); }
+    50%,100%{ transform:translateX(100%); }
   }
   .term-vars{display:flex;gap:10px;margin-top:16px;flex-wrap:wrap;}
   .var-tag{
@@ -473,9 +530,23 @@
     white-space:nowrap;
   }
   .label-row .fill{
+    position:relative;
     flex:1;
     height:1px;
     background:var(--line);
+    overflow:hidden;
+  }
+  .label-row .fill::after{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:linear-gradient(90deg, transparent, rgba(242,183,5,0.6), transparent);
+    transform:translateX(-100%);
+    animation:labelShimmer 5s ease-in-out infinite;
+  }
+  @keyframes labelShimmer{
+    0%{ transform:translateX(-100%); }
+    45%,100%{ transform:translateX(100%); }
   }
 
   h2{
@@ -724,6 +795,11 @@
   .pill .dot{
     width:5px;height:5px;border-radius:50%;
     background:var(--coral);
+    animation:dotGlowCoral 2.6s ease-in-out infinite;
+  }
+  @keyframes dotGlowCoral{
+    0%,100%{ box-shadow:0 0 0 rgba(239,91,91,0); }
+    50%{ box-shadow:0 0 8px 2px rgba(239,91,91,0.55); }
   }
 
   .not-for{
@@ -1357,6 +1433,60 @@
   track.addEventListener('pointercancel', stop);
   track.addEventListener('pointerleave', stop);
   track.addEventListener('click', function(e){ if(moved) e.preventDefault(); }, true);
+})();
+
+/* revelar seções ao rolar + contador animado nos números — puramente decorativo,
+   degrada bem: sem IntersectionObserver tudo aparece direto, sem nada quebrar */
+(function(){
+  var targets = document.querySelectorAll('h2, .lead, .compare-card, .layer-row, .ficha-row, .limit-row, .price-card, .module-stack, .not-for, .dossie-body');
+  var staggerTargets = document.querySelectorAll('.tags-row, .stats-row, .price-list');
+  targets.forEach(function(el){ el.classList.add('reveal'); });
+  staggerTargets.forEach(function(el){ el.classList.add('reveal-stagger'); });
+
+  if(!('IntersectionObserver' in window)){
+    targets.forEach(function(el){ el.classList.add('is-visible'); });
+    staggerTargets.forEach(function(el){ el.classList.add('is-visible'); });
+    return;
+  }
+
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(entry){
+      if(entry.isIntersecting){
+        entry.target.classList.add('is-visible');
+        io.unobserve(entry.target);
+      }
+    });
+  }, {threshold:0.12, rootMargin:'0px 0px -40px 0px'});
+  targets.forEach(function(el){ io.observe(el); });
+  staggerTargets.forEach(function(el){ io.observe(el); });
+
+  var statsRow = document.querySelector('.stats-row');
+  if(statsRow){
+    var counted = false;
+    var statIo = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting && !counted){
+          counted = true;
+          entry.target.querySelectorAll('.stat-num').forEach(function(el){
+            var target = parseInt(el.textContent, 10);
+            if(isNaN(target)) return;
+            var startTime = null;
+            var duration = 900;
+            function step(ts){
+              if(!startTime) startTime = ts;
+              var progress = Math.min((ts - startTime) / duration, 1);
+              el.textContent = Math.floor(progress * target);
+              if(progress < 1) requestAnimationFrame(step);
+              else el.textContent = target;
+            }
+            requestAnimationFrame(step);
+          });
+          statIo.unobserve(entry.target);
+        }
+      });
+    }, {threshold:0.4});
+    statIo.observe(statsRow);
+  }
 })();
 </script>
 
