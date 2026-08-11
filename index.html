@@ -31,7 +31,8 @@
     color:var(--text);
     font-family:'Public Sans',sans-serif;
     font-size:16px;
-    line-height:1.6;
+    line-height:1.75;
+    letter-spacing:0.01em;
     -webkit-font-smoothing:antialiased;
   }
   img,svg{display:block;max-width:100%;}
@@ -141,6 +142,40 @@
   }
   .hero .wrap{position:relative;z-index:1;}
 
+  .hero-text{position:relative;}
+  .prompt-float{
+    position:absolute;
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    color:var(--mustard-dark);
+    background:rgba(21,24,31,0.85);
+    border:1px solid rgba(242,183,5,0.28);
+    border-radius:5px;
+    padding:6px 11px;
+    white-space:nowrap;
+    pointer-events:none;
+    z-index:2;
+    animation:drift 7s ease-in-out infinite;
+  }
+  .prompt-float::before{
+    content:"";
+    width:4px;height:4px;
+    border-radius:50%;
+    background:var(--coral);
+    flex-shrink:0;
+  }
+  .pf-1{ top:-6px; right:26px; animation-delay:0s; }
+  .pf-2{ top:64px; right:-18px; animation-delay:-2.4s; }
+  .pf-3{ top:132px; right:70px; animation-delay:-4.8s; }
+  @keyframes drift{
+    0%,100%{ transform:translateY(0) rotate(-1.5deg); opacity:0.55; }
+    50%{ transform:translateY(-9px) rotate(1.5deg); opacity:0.85; }
+  }
+  @media (max-width:900px){ .prompt-float{ display:none; } }
+
   .terminal-line{
     font-family:'JetBrains Mono',monospace;
     font-size:13px;
@@ -182,19 +217,20 @@
     font-family:'Fraunces',serif;
     font-weight:500;
     font-size:44px;
-    line-height:1.14;
+    line-height:1.28;
     letter-spacing:-0.01em;
-    max-width:11.5ch;
-    margin-bottom:22px;
+    max-width:12.5ch;
+    margin-bottom:30px;
   }
   h1 .hl{color:var(--mustard);}
   @media (max-width:640px){ h1{font-size:32px;} }
 
   .subtitle{
     font-size:17px;
+    line-height:1.85;
     color:var(--text2);
     max-width:56ch;
-    margin-bottom:36px;
+    margin-bottom:44px;
   }
 
   .btn-primary{
@@ -333,15 +369,16 @@
     font-family:'Fraunces',serif;
     font-weight:500;
     font-size:28px;
-    line-height:1.25;
+    line-height:1.4;
     max-width:20ch;
-    margin-bottom:18px;
+    margin-bottom:24px;
   }
 
   .lead{
+    line-height:1.85;
     color:var(--text2);
     max-width:58ch;
-    margin-bottom:44px;
+    margin-bottom:52px;
   }
 
   /* ---------- comparison ---------- */
@@ -385,6 +422,7 @@
   .compare-card.good .compare-label{color:var(--mustard);}
   .compare-card p{
     font-size:14.5px;
+    line-height:1.8;
     color:var(--text2);
   }
 
@@ -392,7 +430,7 @@
   .layer-row{
     display:flex;
     gap:24px;
-    padding:28px 0;
+    padding:36px 0;
     border-bottom:1px solid var(--line);
   }
   .layer-row:first-of-type{border-top:1px solid var(--line);}
@@ -408,15 +446,15 @@
     font-family:'Fraunces',serif;
     font-weight:500;
     font-size:19px;
-    margin-bottom:6px;
+    margin-bottom:10px;
   }
-  .layer-desc{color:var(--text2);font-size:14.5px;max-width:52ch;}
+  .layer-desc{color:var(--text2);font-size:14.5px;line-height:1.8;max-width:52ch;}
 
   /* ---------- grid blocos ---------- */
   .blocks-grid{
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:18px;
+    gap:22px;
   }
   .blocks-grid .card:nth-child(4),
   .blocks-grid .card:nth-child(5){grid-column:span 1;}
@@ -430,44 +468,27 @@
     background:var(--bg2);
     border:1px solid var(--line);
     border-radius:6px;
-    padding:24px;
+    padding:28px;
     position:relative;
     overflow:hidden;
-  }
-  .card-num-row{
-    display:flex;
-    align-items:baseline;
-    gap:6px;
-    margin-bottom:14px;
-  }
-  .card-num{
-    font-family:'Fraunces',serif;
-    font-weight:500;
-    font-size:26px;
-    color:var(--mustard);
-  }
-  .card-num-frac{
-    font-family:'JetBrains Mono',monospace;
-    font-size:13px;
-    color:var(--text3);
   }
   .card-range{
     font-family:'JetBrains Mono',monospace;
     font-size:12px;
     color:var(--mustard-dark);
-    margin-bottom:8px;
+    margin-bottom:12px;
     letter-spacing:0.04em;
   }
   .card-title{
     font-family:'Fraunces',serif;
     font-weight:500;
     font-size:18px;
-    margin-bottom:10px;
+    margin-bottom:12px;
   }
   .card-desc{
     font-size:13.5px;
     color:var(--text2);
-    line-height:1.55;
+    line-height:1.75;
   }
   .card-bar{
     position:absolute;
@@ -513,7 +534,7 @@
   .ficha-list .ficha-row{
     display:flex;
     gap:24px;
-    padding:20px 0;
+    padding:26px 0;
     border-bottom:1px solid var(--line);
   }
   .ficha-list .ficha-row:first-child{border-top:1px solid var(--line);}
@@ -524,27 +545,28 @@
     min-width:150px;
     flex-shrink:0;
   }
-  .ficha-desc{color:var(--text2);font-size:14.5px;}
+  .ficha-desc{color:var(--text2);font-size:14.5px;line-height:1.8;}
   @media (max-width:560px){
     .ficha-list .ficha-row{flex-direction:column;gap:6px;}
   }
 
   /* ---------- dossie terminal ---------- */
-  .dossie-body{padding:28px 24px 32px;}
-  .dossie-block{margin-bottom:22px;}
+  .dossie-body{padding:32px 26px 36px;}
+  .dossie-block{margin-bottom:28px;}
   .dossie-block:last-child{margin-bottom:0;}
   .dossie-block-title{
     font-family:'JetBrains Mono',monospace;
     font-size:12px;
     letter-spacing:0.1em;
     color:var(--mustard);
-    margin-bottom:10px;
+    margin-bottom:14px;
   }
   .dossie-field{
     font-family:'Source Serif 4',serif;
     font-size:14.5px;
+    line-height:1.9;
     color:var(--text2);
-    margin-bottom:6px;
+    margin-bottom:8px;
   }
   .dossie-field span{color:var(--text3);}
 
@@ -586,13 +608,14 @@
   }
   .not-for p{
     font-size:14px;
+    line-height:1.8;
     color:var(--text2);
-    margin-bottom:4px;
+    margin-bottom:8px;
   }
 
   /* ---------- limites ---------- */
   .limit-row{
-    padding:24px 0;
+    padding:30px 0;
     border-bottom:1px solid var(--line);
   }
   .limit-row:first-of-type{border-top:1px solid var(--line);}
@@ -600,9 +623,9 @@
     font-family:'Fraunces',serif;
     font-weight:500;
     font-size:17px;
-    margin-bottom:6px;
+    margin-bottom:10px;
   }
-  .limit-desc{color:var(--text2);font-size:14.5px;}
+  .limit-desc{color:var(--text2);font-size:14.5px;line-height:1.8;}
 
   /* ---------- preco ---------- */
   .price-card{
@@ -721,7 +744,7 @@
   @media (max-width:640px){
     .eyebrow,.term-file,.term-badge,.card-range,.stat-label,
     .price-terms,.price-guarantee,.cta-note,.footer-left,.footer-right,
-    .label-row .label,.dossie-block-title,.card-num-frac,.name,.count{
+    .label-row .label,.dossie-block-title,.name,.count{
       font-size:13px !important;
     }
   }
@@ -756,7 +779,12 @@
 
     <span class="eyebrow"><span class="dot"></span>50 PROMPTS PRONTOS</span>
 
-    <h1>Feche, atenda e mantenha clientes <span class="hl">sem trabalhar o dobro</span></h1>
+    <div class="hero-text">
+      <span class="prompt-float pf-1">prompt_07.md</span>
+      <span class="prompt-float pf-2">prompt_23.md</span>
+      <span class="prompt-float pf-3">prompt_41.md</span>
+      <h1>Feche, atenda e mantenha clientes <span class="hl">sem trabalhar o dobro</span></h1>
+    </div>
 
     <p class="subtitle">50 prompts testados — com contexto, restrição e formato de saída já definidos — para social media, copywriter, designer, editor de vídeo, gestor de tráfego e consultor de marketing.</p>
 
@@ -854,35 +882,30 @@
 
     <div class="blocks-grid">
       <div class="card">
-        <div class="card-num-row"><span class="card-num">01</span><span class="card-num-frac mono">/05</span></div>
         <div class="card-range mono">PROMPTS 01–13</div>
         <div class="card-title">Captação e venda</div>
         <p class="card-desc">Nicho, auditoria de prospect, abordagem, follow-up, call de diagnóstico, preço, proposta, objeção, negociação, escopo, boas-vindas.</p>
         <div class="card-bar"></div>
       </div>
       <div class="card">
-        <div class="card-num-row"><span class="card-num">02</span><span class="card-num-frac mono">/05</span></div>
         <div class="card-range mono">PROMPTS 14–22</div>
         <div class="card-title">Onboarding e estratégia</div>
         <p class="card-desc">Briefing, tom de voz, mapa de público, pilares, concorrência, baseline, bio, plano de 90 dias, métricas.</p>
         <div class="card-bar"></div>
       </div>
       <div class="card">
-        <div class="card-num-row"><span class="card-num">03</span><span class="card-num-frac mono">/05</span></div>
         <div class="card-range mono">PROMPTS 23–37</div>
         <div class="card-title">Produção</div>
         <p class="card-desc">Calendário, banco de temas, ganchos, Reels, carrossel, legenda, stories, anúncio, reaproveitamento, revisão anti-IA.</p>
         <div class="card-bar"></div>
       </div>
       <div class="card">
-        <div class="card-num-row"><span class="card-num">04</span><span class="card-num-frac mono">/05</span></div>
         <div class="card-range mono">PROMPTS 38–42</div>
         <div class="card-title">Atendimento e relacionamento</div>
         <p class="card-desc">Comentários, qualificação em DM, crise, lead que sumiu, fluxo de aprovação.</p>
         <div class="card-bar"></div>
       </div>
       <div class="card">
-        <div class="card-num-row"><span class="card-num">05</span><span class="card-num-frac mono">/05</span></div>
         <div class="card-range mono">PROMPTS 43–50</div>
         <div class="card-title">Análise e retenção</div>
         <p class="card-desc">Relatório, diagnóstico de post ruim, leitura de padrão, reunião de resultado, upsell, reajuste, case, resgate.</p>
