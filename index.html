@@ -69,6 +69,11 @@
     width:6px;height:6px;border-radius:50%;
     background:var(--mustard);
     box-shadow:0 0 8px 2px rgba(242,183,5,0.45);
+    animation:dotGlowMustard 2.6s ease-in-out infinite;
+  }
+  @keyframes dotGlowMustard{
+    0%,100%{ box-shadow:0 0 8px 2px rgba(242,183,5,0.45); }
+    50%{ box-shadow:0 0 13px 4px rgba(242,183,5,0.7); }
   }
   .rail span{
     writing-mode:vertical-rl;
@@ -91,6 +96,11 @@
     background:var(--green);
     box-shadow:0 0 7px 2px rgba(61,190,122,0.5);
     flex-shrink:0;
+    animation:dotGlowGreen 2.6s ease-in-out infinite;
+  }
+  @keyframes dotGlowGreen{
+    0%,100%{ box-shadow:0 0 7px 2px rgba(61,190,122,0.5); }
+    50%{ box-shadow:0 0 12px 4px rgba(61,190,122,0.75); }
   }
   .nav-left .count{
     font-family:'JetBrains Mono',monospace;
@@ -109,9 +119,9 @@
     border:1px solid var(--line);
     border-radius:5px;
     color:var(--text2);
-    transition:border-color .2s, color .2s;
+    transition:border-color .2s, color .2s, transform .2s;
   }
-  .btn-ghost:hover{border-color:rgba(242,183,5,0.5);color:var(--text);}
+  .btn-ghost:hover{border-color:rgba(242,183,5,0.5);color:var(--text);transform:translateY(-1px);}
 
   /* ---------- hero ---------- */
   .hero{
@@ -128,6 +138,11 @@
     background:radial-gradient(ellipse at center, rgba(242,183,5,0.13), transparent 68%);
     pointer-events:none;
     z-index:0;
+    animation:glowBreathe 7s ease-in-out infinite;
+  }
+  @keyframes glowBreathe{
+    0%,100%{ opacity:0.75; }
+    50%{ opacity:1; }
   }
   .hero::after{
     content:"";
@@ -144,7 +159,6 @@
 
   .hero-text{position:relative;}
   .prompt-float{
-    position:absolute;
     width:132px;
     background:var(--bg2);
     border:1px solid var(--line);
@@ -199,22 +213,27 @@
     padding:2px 5px;
     margin-top:5px;
   }
-  .pf-1{ top:-14px; right:14px; animation-delay:0s; }
-  .pf-2{ top:96px; right:-36px; animation-delay:-2.4s; }
-  .pf-3{ top:216px; right:56px; animation-delay:-4.8s; }
   @keyframes drift{
     0%,100%{ transform:translateY(0) rotate(-1.5deg); opacity:0.8; }
     50%{ transform:translateY(-10px) rotate(1.5deg); opacity:1; }
   }
 
-  /* abaixo de 900px os mini-terminais saem do modo flutuante-sobreposto
-     e viram uma fileira rolável acima do título, pra nunca cobrir o texto */
+  /* os mini-terminais decorativos ficam presos ao preview grande,
+     que já vem depois de todo o texto do hero — nunca antes ou por cima dele */
+  .prompt-float-row{ position:relative; }
+  @media (min-width:901px){
+    .prompt-float-row{ position:static; }
+    .prompt-float{ position:absolute; }
+    .pf-1{ top:-30px; left:-26px; animation-delay:0s; }
+    .pf-2{ top:36%; right:-38px; animation-delay:-2.4s; }
+    .pf-3{ bottom:-26px; left:20%; animation-delay:-4.8s; }
+  }
   @media (max-width:900px){
     .prompt-float-row{
       display:flex;
       gap:10px;
       overflow-x:auto;
-      margin-bottom:22px;
+      margin-top:20px;
       padding-bottom:2px;
       -webkit-overflow-scrolling:touch;
     }
@@ -264,6 +283,7 @@
     width:6px;height:6px;border-radius:50%;
     background:var(--mustard);
     box-shadow:0 0 6px 2px rgba(242,183,5,0.6);
+    animation:dotGlowMustard 2.6s ease-in-out infinite;
   }
 
   h1{
@@ -367,6 +387,11 @@
     border:1px solid var(--line);
     border-radius:8px;
     overflow:hidden;
+    animation:termBreathe 6s ease-in-out infinite;
+  }
+  @keyframes termBreathe{
+    0%,100%{ box-shadow:0 0 0 rgba(0,0,0,0); }
+    50%{ box-shadow:0 18px 40px -22px rgba(242,183,5,0.18); }
   }
   .term-ghost{
     position:absolute;
@@ -493,7 +518,9 @@
     padding:26px;
     border-radius:6px;
     border:1px solid var(--line);
+    transition:transform .3s ease, border-color .3s ease;
   }
+  .compare-card:hover{ transform:translateY(-3px); }
   .compare-card.bad{
     opacity:0.6;
     background:transparent;
@@ -510,6 +537,7 @@
     width:70px;height:70px;
     background:radial-gradient(circle at top right, rgba(242,183,5,0.18), transparent 70%);
     pointer-events:none;
+    animation:glowBreathe 5s ease-in-out infinite;
   }
   .compare-label{
     font-family:'JetBrains Mono',monospace;
@@ -554,10 +582,11 @@
   /* ---------- pilha interativa de módulos ---------- */
   .module-stack{
     position:relative;
-    max-width:420px;
-    height:308px;
+    max-width:440px;
+    height:420px;
     margin:0 auto;
   }
+  .stack-card .term-title{font-size:19px;}
   .stack-radio{
     position:absolute;
     width:1px;height:1px;
@@ -605,7 +634,7 @@
     margin-top:24px;
   }
   @media (max-width:640px){
-    .module-stack{height:280px;}
+    .module-stack{height:380px;}
     .card-2{ transform:translate(-50%,13px) rotate(2.5deg) scale(0.96); }
     .card-3{ transform:translate(-50%,24px) rotate(-3deg) scale(0.93); }
     .card-4{ transform:translate(-50%,34px) rotate(3.5deg) scale(0.9); }
@@ -651,6 +680,11 @@
     gap:24px;
     padding:26px 0;
     border-bottom:1px solid var(--line);
+    transition:padding-left .25s ease, background .25s ease;
+  }
+  .ficha-list .ficha-row:hover{
+    padding-left:8px;
+    background:rgba(242,240,234,0.025);
   }
   .ficha-list .ficha-row:first-child{border-top:1px solid var(--line);}
   .ficha-term{
@@ -702,7 +736,9 @@
     border:1px solid var(--line);
     border-radius:20px;
     padding:9px 16px;
+    transition:transform .2s ease, border-color .2s ease;
   }
+  .pill:hover{ transform:translateY(-2px); border-color:rgba(242,183,5,0.4); }
   .pill .dot{
     width:5px;height:5px;border-radius:50%;
     background:var(--coral);
@@ -732,6 +768,11 @@
   .limit-row{
     padding:30px 0;
     border-bottom:1px solid var(--line);
+    transition:padding-left .25s ease, background .25s ease;
+  }
+  .limit-row:hover{
+    padding-left:8px;
+    background:rgba(242,240,234,0.025);
   }
   .limit-row:first-of-type{border-top:1px solid var(--line);}
   .limit-title{
@@ -761,6 +802,7 @@
     width:150px;height:150px;
     background:radial-gradient(circle, rgba(242,183,5,0.16), transparent 70%);
     pointer-events:none;
+    animation:glowBreathe 5.5s ease-in-out infinite;
   }
   .price-name{
     font-family:'Fraunces',serif;
@@ -816,6 +858,7 @@
     width:700px;height:400px;
     background:radial-gradient(ellipse at center, rgba(242,183,5,0.14), transparent 70%);
     pointer-events:none;
+    animation:glowBreathe 7s ease-in-out infinite;
   }
   .cta-final .wrap{position:relative;z-index:1;}
   .cta-final .label{
@@ -896,38 +939,6 @@
     <span class="eyebrow"><span class="dot"></span>50 PROMPTS PRONTOS</span>
 
     <div class="hero-text">
-      <div class="prompt-float-row">
-      <div class="prompt-float pf-1">
-        <div class="pf-bar"><span></span><span></span><span></span></div>
-        <div class="pf-body">
-          <div class="pf-tag">‹07›</div>
-          <div class="pf-title">Gancho pro Reels</div>
-          <div class="pf-line" style="width:90%;"></div>
-          <div class="pf-line" style="width:65%;"></div>
-          <span class="pf-var">[tema]</span>
-        </div>
-      </div>
-      <div class="prompt-float pf-2">
-        <div class="pf-bar"><span></span><span></span><span></span></div>
-        <div class="pf-body">
-          <div class="pf-tag">‹23›</div>
-          <div class="pf-title">Calendário de conteúdo</div>
-          <div class="pf-line" style="width:85%;"></div>
-          <div class="pf-line" style="width:70%;"></div>
-          <span class="pf-var">[nicho]</span>
-        </div>
-      </div>
-      <div class="prompt-float pf-3">
-        <div class="pf-bar"><span></span><span></span><span></span></div>
-        <div class="pf-body">
-          <div class="pf-tag">‹41›</div>
-          <div class="pf-title">Resposta de crise</div>
-          <div class="pf-line" style="width:80%;"></div>
-          <div class="pf-line" style="width:55%;"></div>
-          <span class="pf-var">[cliente]</span>
-        </div>
-      </div>
-      </div>
       <h1>Feche, atenda e mantenha clientes <span class="hl">sem trabalhar o dobro</span></h1>
     </div>
 
@@ -955,6 +966,39 @@
           <div class="term-vars">
             <span class="var-tag">[segmento]</span>
             <span class="var-tag">[cole a bio]</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="prompt-float-row">
+        <div class="prompt-float pf-1">
+          <div class="pf-bar"><span></span><span></span><span></span></div>
+          <div class="pf-body">
+            <div class="pf-tag">‹07›</div>
+            <div class="pf-title">Gancho pro Reels</div>
+            <div class="pf-line" style="width:90%;"></div>
+            <div class="pf-line" style="width:65%;"></div>
+            <span class="pf-var">[tema]</span>
+          </div>
+        </div>
+        <div class="prompt-float pf-2">
+          <div class="pf-bar"><span></span><span></span><span></span></div>
+          <div class="pf-body">
+            <div class="pf-tag">‹23›</div>
+            <div class="pf-title">Calendário de conteúdo</div>
+            <div class="pf-line" style="width:85%;"></div>
+            <div class="pf-line" style="width:70%;"></div>
+            <span class="pf-var">[nicho]</span>
+          </div>
+        </div>
+        <div class="prompt-float pf-3">
+          <div class="pf-bar"><span></span><span></span><span></span></div>
+          <div class="pf-body">
+            <div class="pf-tag">‹41›</div>
+            <div class="pf-title">Resposta de crise</div>
+            <div class="pf-line" style="width:80%;"></div>
+            <div class="pf-line" style="width:55%;"></div>
+            <span class="pf-var">[cliente]</span>
           </div>
         </div>
       </div>
