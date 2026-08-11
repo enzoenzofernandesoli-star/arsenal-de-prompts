@@ -219,33 +219,28 @@
   }
 
   /* sem terminal grande: os 3 mini-terminais ficam soltos e dispersos
-     no espaço abaixo do texto — nunca em fileira, nunca por cima do título */
+     no espaço abaixo do texto — nunca em fileira, nunca por cima do título,
+     em qualquer largura de tela */
   .prompt-float-row{ position:relative; }
+  .prompt-float{ position:absolute; }
   @media (min-width:901px){
-    .prompt-float-row{ position:static; }
-    .prompt-float{ position:absolute; width:148px; }
+    .prompt-float{ width:148px; }
     .pf-1{ --baseRot:-6deg; top:6px; left:4%; animation-delay:0s; }
     .pf-2{ --baseRot:5deg; top:96px; right:10%; animation-delay:-2.4s; }
     .pf-3{ --baseRot:-3deg; top:190px; left:38%; animation-delay:-4.8s; }
   }
   @media (max-width:900px){
-    .prompt-float-row{
-      display:flex;
-      gap:10px;
-      overflow-x:auto;
-      margin-top:20px;
-      padding-bottom:2px;
-      -webkit-overflow-scrolling:touch;
-    }
-    .prompt-float{
-      position:static;
-      flex:0 0 auto;
-      width:118px;
-    }
+    .prompt-float{ width:126px; }
+    .pf-1{ --baseRot:-6deg; top:0; left:0; animation-delay:0s; }
+    .pf-2{ --baseRot:5deg; top:64px; right:2%; animation-delay:-2.4s; }
+    .pf-3{ --baseRot:-3deg; top:140px; left:26%; animation-delay:-4.8s; }
   }
-  @media (max-width:640px){
-    .prompt-float{ width:104px; }
+  @media (max-width:480px){
+    .prompt-float{ width:112px; }
     .pf-title{ font-size:9.5px; }
+    .pf-1{ left:0; }
+    .pf-2{ right:0; }
+    .pf-3{ left:22%; }
   }
 
   .terminal-line{
@@ -383,7 +378,8 @@
     padding-bottom:40px;
     min-height:300px;
   }
-  @media (max-width:900px){ .preview{ min-height:0; padding-bottom:0; } }
+  @media (max-width:900px){ .preview{ min-height:250px; } }
+  @media (max-width:480px){ .preview{ min-height:230px; } }
   .term{
     background:var(--bg2);
     border:1px solid var(--line);
