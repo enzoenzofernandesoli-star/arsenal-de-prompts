@@ -1597,27 +1597,75 @@
     });
   }
 
-  /* popup de intenção de saída — dispara uma vez por sessão quando o mouse
-     sai por cima da tela (gesto clássico de ir fechar a aba/voltar) */
+  /* popup de intenção de saída.
+     Nenhum site consegue de fato IMPEDIR alguém de fechar a aba, trocar de
+     app ou fechar o navegador — os navegadores bloqueiam isso de propósito.
+     O que dá pra fazer, e o que está aqui:
+       - celular: intercepta o botão/gesto de VOLTAR (o jeito mais comum de
+         "sair" no mobile) e mostra o aviso antes de navegar pra trás;
+       - computador: mostra o aviso quando o mouse sai por cima da janela,
+         e também o aviso nativo do navegador ao fechar a aba/atualizar. */
   var modal = document.getElementById('exitModal');
   var modalClose = document.getElementById('exitModalClose');
   if(modal){
-    modalClose && modalClose.addEventListener('click', function(){
+    var backGuardActive = false;
+
+    function openExitModal(){
+      modal.classList.add('is-open');
+      storageSet('exitModalShown', '1');
+    }
+    function closeExitModal(){
       modal.classList.remove('is-open');
+    }
+
+    modalClose && modalClose.addEventListener('click', function(){
+      closeExitModal();
+      if(backGuardActive){
+        backGuardActive = false;
+        window.removeEventListener('popstate', onPopState);
+        history.go(-1);
+      }
     });
     modal.addEventListener('click', function(e){
-      if(e.target === modal) modal.classList.remove('is-open');
+      if(e.target === modal) closeExitModal();
     });
 
-    if(storageGet('exitModalShown') !== '1' && window.matchMedia('(min-width:768px)').matches){
-      var trigger = function(e){
+    var alreadyShown = storageGet('exitModalShown') === '1';
+
+    /* desktop: mouse saindo por cima da janela */
+    if(!alreadyShown && window.matchMedia('(min-width:768px)').matches){
+      var mouseTrigger = function(e){
         if(e.clientY > 0) return;
-        storageSet('exitModalShown', '1');
-        modal.classList.add('is-open');
-        document.removeEventListener('mouseleave', trigger);
+        openExitModal();
+        document.removeEventListener('mouseleave', mouseTrigger);
       };
-      document.addEventListener('mouseleave', trigger);
+      document.addEventListener('mouseleave', mouseTrigger);
     }
+
+    /* mobile: botão/gesto de voltar — empurra um estado extra no histórico;
+       quando a pessoa aperta voltar, cai nesse estado em vez de sair, e a
+       gente mostra o aviso ali */
+    function onPopState(){
+      openExitModal();
+      backGuardActive = true;
+      history.pushState({exitGuard: true}, '', location.href);
+    }
+    if(!alreadyShown && window.matchMedia('(max-width:767px)').matches){
+      history.pushState({exitGuard: true}, '', location.href);
+      window.addEventListener('popstate', onPopState);
+    }
+
+    /* computador: aviso nativo do navegador ao fechar a aba / atualizar a
+       página — não dispara se a pessoa já viu o aviso ou clicou em comprar */
+    var allowLeave = false;
+    document.querySelectorAll('a.btn-primary, a.btn-ghost').forEach(function(a){
+      a.addEventListener('click', function(){ allowLeave = true; });
+    });
+    window.addEventListener('beforeunload', function(e){
+      if(allowLeave || storageGet('exitModalShown') === '1') return;
+      e.preventDefault();
+      e.returnValue = '';
+    });
   }
 })();
 
