@@ -964,6 +964,125 @@
       font-size:13px !important;
     }
   }
+
+  /* ---------- faixa de promoção (cronômetro real, sincronizado, cíclico de 24h) ---------- */
+  .promo-banner{
+    position:relative;
+    background:linear-gradient(90deg, rgba(239,91,91,0.12), rgba(242,183,5,0.10));
+    border-bottom:1px solid var(--line);
+  }
+  .promo-banner.is-hidden{ display:none; }
+  .promo-banner .wrap{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:10px;
+    padding:10px 46px;
+    text-align:center;
+  }
+  .promo-banner-text{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    color:var(--text2);
+  }
+  .promo-banner-timer{
+    font-family:'JetBrains Mono',monospace;
+    font-size:13px;
+    font-weight:500;
+    color:var(--coral);
+    letter-spacing:0.02em;
+    min-width:70px;
+  }
+  .promo-banner-close{
+    position:absolute;
+    right:14px;top:50%;
+    transform:translateY(-50%);
+    width:22px;height:22px;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--text3);
+    border:1px solid var(--line);
+    border-radius:50%;
+    background:transparent;
+    font-size:13px;line-height:1;
+    cursor:pointer;
+    transition:color .2s, border-color .2s;
+  }
+  .promo-banner-close:hover{ color:var(--text); border-color:rgba(242,240,234,0.3); }
+
+  /* ---------- popup de intenção de saída ---------- */
+  .exit-modal{
+    position:fixed;
+    inset:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:rgba(14,17,22,0.78);
+    backdrop-filter:blur(4px);
+    -webkit-backdrop-filter:blur(4px);
+    padding:24px;
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .25s ease;
+  }
+  .exit-modal.is-open{ opacity:1; pointer-events:auto; }
+  .exit-modal-card{
+    max-width:400px;
+    width:100%;
+    background:var(--bg2);
+    border:1px solid rgba(242,183,5,0.4);
+    border-radius:8px;
+    padding:34px 30px;
+    text-align:center;
+    transform:translateY(14px) scale(.98);
+    transition:transform .25s ease;
+    box-shadow:0 30px 60px -20px rgba(0,0,0,0.6);
+  }
+  .exit-modal.is-open .exit-modal-card{ transform:translateY(0) scale(1); }
+  .exit-modal-eyebrow{
+    font-family:'JetBrains Mono',monospace;
+    font-size:11.5px;
+    letter-spacing:0.1em;
+    text-transform:uppercase;
+    color:var(--coral);
+    margin-bottom:14px;
+  }
+  .exit-modal-title{
+    font-family:'Fraunces',serif;
+    font-weight:500;
+    font-size:22px;
+    margin-bottom:12px;
+  }
+  .exit-modal-text{
+    font-size:14.5px;
+    color:var(--text2);
+    line-height:1.7;
+    margin-bottom:14px;
+  }
+  .exit-modal-timer{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:16px;
+    color:var(--mustard);
+    border:1px solid rgba(242,183,5,0.3);
+    background:rgba(242,183,5,0.06);
+    padding:6px 14px;
+    border-radius:6px;
+    margin-bottom:26px;
+  }
+  .exit-modal-actions{ display:flex; flex-direction:column; gap:10px; }
+  .exit-modal-secondary{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12.5px;
+    color:var(--text3);
+    background:none;
+    border:none;
+    padding:8px;
+    cursor:pointer;
+    transition:color .2s;
+  }
+  .exit-modal-secondary:hover{ color:var(--text2); }
 </style>
 </head>
 <body>
@@ -972,7 +1091,20 @@
   e barra fixa) apontam pra https://pay.kiwify.com.br/fs1mtEq — troque aqui se o
   link de checkout mudar. O "Acessar" do menu continua com href="#" (placeholder
   pra área de membros, não é checkout).
+
+  CRONÔMETRO DA PROMOÇÃO: é um ciclo real de 24h, sincronizado — todo visitante
+  vê o mesmo horário no mesmo instante, e quando zera de verdade ele reinicia
+  sozinho pro próximo ciclo. Pra mudar a duração do ciclo, troque CYCLE_HOURS
+  no script no fim do arquivo.
 -->
+
+<div class="promo-banner" id="promoBanner">
+  <div class="wrap">
+    <span class="promo-banner-text">promoção de lançamento por R$ 14,99 termina em</span>
+    <span class="promo-banner-timer mono" data-promo-timer>24:00:00</span>
+    <button class="promo-banner-close" id="promoBannerClose" aria-label="Fechar aviso">×</button>
+  </div>
+</div>
 
 <div class="rail">
   <span class="dot" style="width:6px;height:6px;border-radius:50%;background:#F2B705;box-shadow:0 0 8px 2px rgba(242,183,5,0.45);"></span>
@@ -1405,7 +1537,90 @@
   </div>
 </div>
 
+<div class="exit-modal" id="exitModal">
+  <div class="exit-modal-card">
+    <div class="exit-modal-eyebrow">espera</div>
+    <div class="exit-modal-title">Quer mesmo perder a promoção?</div>
+    <p class="exit-modal-text">O Arsenal do Social Media por R$ 14,99 some quando o cronômetro abaixo zerar.</p>
+    <div class="exit-modal-timer mono" data-promo-timer>24:00:00</div>
+    <div class="exit-modal-actions">
+      <a href="https://pay.kiwify.com.br/fs1mtEq" class="btn-primary btn-full">Quero garantir por R$ 14,99</a>
+      <button class="exit-modal-secondary" id="exitModalClose">sair mesmo assim</button>
+    </div>
+  </div>
+</div>
+
 <script>
+/* cronômetro real da promoção — ciclo de 24h sincronizado (mesmo horário pra
+   todo mundo), reinicia sozinho quando zera de verdade. Nada de valor falso
+   por visitante. */
+(function(){
+  var CYCLE_HOURS = 24;
+  var CYCLE_MS = CYCLE_HOURS * 60 * 60 * 1000;
+  var CYCLE_ANCHOR = new Date('2025-01-01T00:00:00Z').getTime();
+  var timerEls = document.querySelectorAll('[data-promo-timer]');
+  if(timerEls.length){
+    function pad(n){ return String(n).padStart(2,'0'); }
+    function tick(){
+      var elapsed = (Date.now() - CYCLE_ANCHOR) % CYCLE_MS;
+      var remaining = CYCLE_MS - elapsed;
+      var totalSec = Math.max(0, Math.floor(remaining/1000));
+      var h = Math.floor(totalSec/3600);
+      var m = Math.floor((totalSec%3600)/60);
+      var s = totalSec%60;
+      var text = pad(h)+':'+pad(m)+':'+pad(s);
+      timerEls.forEach(function(el){ el.textContent = text; });
+    }
+    tick();
+    setInterval(tick, 1000);
+  }
+
+  /* sessionStorage pode não existir (navegação privada restrita, iframes
+     sandboxed, etc) — sem ele os popups só não lembram que já apareceram
+     nesta aba, mas continuam funcionando normalmente */
+  function storageGet(key){
+    try{ return sessionStorage.getItem(key); }catch(e){ return null; }
+  }
+  function storageSet(key, val){
+    try{ sessionStorage.setItem(key, val); }catch(e){}
+  }
+
+  var banner = document.getElementById('promoBanner');
+  var bannerClose = document.getElementById('promoBannerClose');
+  if(banner && bannerClose){
+    if(storageGet('promoBannerClosed') === '1'){
+      banner.classList.add('is-hidden');
+    }
+    bannerClose.addEventListener('click', function(){
+      banner.classList.add('is-hidden');
+      storageSet('promoBannerClosed', '1');
+    });
+  }
+
+  /* popup de intenção de saída — dispara uma vez por sessão quando o mouse
+     sai por cima da tela (gesto clássico de ir fechar a aba/voltar) */
+  var modal = document.getElementById('exitModal');
+  var modalClose = document.getElementById('exitModalClose');
+  if(modal){
+    modalClose && modalClose.addEventListener('click', function(){
+      modal.classList.remove('is-open');
+    });
+    modal.addEventListener('click', function(e){
+      if(e.target === modal) modal.classList.remove('is-open');
+    });
+
+    if(storageGet('exitModalShown') !== '1' && window.matchMedia('(min-width:768px)').matches){
+      var trigger = function(e){
+        if(e.clientY > 0) return;
+        storageSet('exitModalShown', '1');
+        modal.classList.add('is-open');
+        document.removeEventListener('mouseleave', trigger);
+      };
+      document.addEventListener('mouseleave', trigger);
+    }
+  }
+})();
+
 /* arrastar com o mouse na trilha de módulos — toque já funciona nativo via scroll-snap */
 (function(){
   var track = document.getElementById('moduleTrack');
