@@ -868,12 +868,33 @@
     font-size:18px;
     margin-bottom:18px;
   }
+  .price-old{
+    font-family:'JetBrains Mono',monospace;
+    font-size:15px;
+    color:var(--text3);
+    text-decoration:line-through;
+    margin-bottom:6px;
+  }
   .price-value{
     font-family:'Fraunces',serif;
     font-weight:500;
     font-size:46px;
     color:var(--mustard);
     margin-bottom:8px;
+  }
+  .price-badge{
+    display:inline-block;
+    font-family:'JetBrains Mono',monospace;
+    font-size:11px;
+    letter-spacing:0.06em;
+    text-transform:uppercase;
+    color:var(--coral);
+    border:1px solid rgba(239,91,91,0.35);
+    background:rgba(239,91,91,0.08);
+    padding:3px 10px;
+    border-radius:12px;
+    margin-left:8px;
+    vertical-align:middle;
   }
   .price-terms{
     font-family:'JetBrains Mono',monospace;
@@ -1100,7 +1121,7 @@
 
 <div class="promo-banner" id="promoBanner">
   <div class="wrap">
-    <span class="promo-banner-text">promoção de lançamento por R$ 14,99 termina em</span>
+    <span class="promo-banner-text">de <s>R$ 30</s> por R$ 14,99 — a promoção termina em</span>
     <span class="promo-banner-timer mono" data-promo-timer>24:00:00</span>
     <button class="promo-banner-close" id="promoBannerClose" aria-label="Fechar aviso">×</button>
   </div>
@@ -1492,6 +1513,7 @@
 
     <div class="price-card">
       <div class="price-name serif">O Arsenal do Social Media</div>
+      <div class="price-old mono">R$ 30 <span class="price-badge">-50%</span></div>
       <div class="price-value">R$ 14,99</div>
       <div class="price-terms">pagamento único · acesso imediato</div>
       <ul class="price-list">
@@ -1531,7 +1553,7 @@
   <div class="wrap sticky-buy-inner">
     <div class="sticky-buy-info">
       <span class="sticky-buy-name">O Arsenal do Social Media</span>
-      <span class="sticky-buy-price">R$ 14,99 · pagamento único</span>
+      <span class="sticky-buy-price"><s>R$ 30</s> R$ 14,99 · pagamento único</span>
     </div>
     <a href="https://pay.kiwify.com.br/fs1mtEq" class="btn-primary">Quero o Arsenal</a>
   </div>
@@ -1541,7 +1563,7 @@
   <div class="exit-modal-card">
     <div class="exit-modal-eyebrow">espera</div>
     <div class="exit-modal-title">Quer mesmo perder a promoção?</div>
-    <p class="exit-modal-text">O Arsenal do Social Media por R$ 14,99 some quando o cronômetro abaixo zerar.</p>
+    <p class="exit-modal-text">O Arsenal do Social Media de <s>R$ 30</s> por R$ 14,99 some quando o cronômetro abaixo zerar.</p>
     <div class="exit-modal-timer mono" data-promo-timer>24:00:00</div>
     <div class="exit-modal-actions">
       <a href="https://pay.kiwify.com.br/fs1mtEq" class="btn-primary btn-full">Quero garantir por R$ 14,99</a>
