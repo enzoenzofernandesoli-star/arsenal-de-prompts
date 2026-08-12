@@ -986,6 +986,45 @@
     }
   }
 
+  /* ---------- aviso de navegador embutido (instagram/facebook/tiktok...) ---------- */
+  .inapp-notice{
+    display:none;
+    position:relative;
+    background:rgba(242,183,5,0.06);
+    border-bottom:1px solid var(--line);
+  }
+  .inapp-notice.is-visible{ display:block; }
+  .inapp-notice .wrap{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-wrap:wrap;
+    gap:8px;
+    padding:9px 46px;
+    text-align:center;
+  }
+  .inapp-notice-text{
+    font-family:'JetBrains Mono',monospace;
+    font-size:12px;
+    color:var(--text2);
+  }
+  .inapp-notice-text strong{ color:var(--mustard); font-weight:500; }
+  .inapp-notice-close{
+    position:absolute;
+    right:14px;top:50%;
+    transform:translateY(-50%);
+    width:20px;height:20px;
+    display:flex;align-items:center;justify-content:center;
+    color:var(--text3);
+    border:1px solid var(--line);
+    border-radius:50%;
+    background:transparent;
+    font-size:12px;line-height:1;
+    cursor:pointer;
+    transition:color .2s, border-color .2s;
+  }
+  .inapp-notice-close:hover{ color:var(--text); border-color:rgba(242,240,234,0.3); }
+
   /* ---------- faixa de promoção (cronômetro real, sincronizado, cíclico de 24h) ---------- */
   .promo-banner{
     position:relative;
@@ -1117,7 +1156,21 @@
   vê o mesmo horário no mesmo instante, e quando zera de verdade ele reinicia
   sozinho pro próximo ciclo. Pra mudar a duração do ciclo, troque CYCLE_HOURS
   no script no fim do arquivo.
+
+  AVISO DE NAVEGADOR EMBUTIDO: quem abre o link de dentro do Instagram, Facebook
+  ou TikTok cai no navegador embutido desses apps — e o "X" pra fechar é
+  controlado pelo próprio app, fora do alcance de qualquer site (nenhum site
+  consegue interceptar isso). Por isso, pra quem estiver nesses apps, aparece
+  este aviso sugerindo abrir no navegador padrão, onde o popup de saída
+  funciona de verdade.
 -->
+
+<div class="inapp-notice" id="inappNotice">
+  <div class="wrap">
+    <span class="inapp-notice-text">você está no navegador do <strong>app</strong> — toque em <strong>⋯</strong> e escolha "abrir no navegador" pra aproveitar tudo</span>
+    <button class="inapp-notice-close" id="inappNoticeClose" aria-label="Fechar aviso">×</button>
+  </div>
+</div>
 
 <div class="promo-banner" id="promoBanner">
   <div class="wrap">
@@ -1573,6 +1626,27 @@
 </div>
 
 <script>
+/* aviso pra quem abre o site de dentro do navegador embutido do Instagram,
+   Facebook ou TikTok — o botão de fechar desses navegadores é controlado
+   pelo próprio app, nenhum site consegue interceptar isso. O aviso sugere
+   abrir no navegador padrão, onde tudo (inclusive o popup de saída) funciona. */
+(function(){
+  var notice = document.getElementById('inappNotice');
+  var noticeClose = document.getElementById('inappNoticeClose');
+  if(!notice) return;
+  var ua = navigator.userAgent || '';
+  var isInApp = /Instagram|FBAN|FBAV|FB_IAB|Messenger|TikTok|musical_ly|Line\//i.test(ua);
+  if(!isInApp) return;
+  try{
+    if(sessionStorage.getItem('inappNoticeClosed') === '1') return;
+  }catch(e){}
+  notice.classList.add('is-visible');
+  noticeClose && noticeClose.addEventListener('click', function(){
+    notice.classList.remove('is-visible');
+    try{ sessionStorage.setItem('inappNoticeClosed', '1'); }catch(e){}
+  });
+})();
+
 /* cronômetro real da promoção — ciclo de 24h sincronizado (mesmo horário pra
    todo mundo), reinicia sozinho quando zera de verdade. Nada de valor falso
    por visitante. */
@@ -1670,11 +1744,16 @@
     function onPopState(){
       openExitModal();
       backGuardActive = true;
-      history.pushState({exitGuard: true}, '', location.href);
+      try{ history.pushState({exitGuard: true}, '', location.href); }catch(e){}
     }
+    /* alguns navegadores embutidos (Instagram, Facebook, TikTok...) restringem
+       a History API — se o pushState falhar aqui, a gente simplesmente não
+       registra o gatilho, em vez de quebrar o resto da página */
     if(!alreadyShown && window.matchMedia('(max-width:767px)').matches){
-      history.pushState({exitGuard: true}, '', location.href);
-      window.addEventListener('popstate', onPopState);
+      try{
+        history.pushState({exitGuard: true}, '', location.href);
+        window.addEventListener('popstate', onPopState);
+      }catch(e){}
     }
 
     /* computador: aviso nativo do navegador ao fechar a aba / atualizar a
